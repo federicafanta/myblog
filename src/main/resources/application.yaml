@@ -1,0 +1,53 @@
+#SERVER
+server:
+  port: 8081  # Configura il server per ascoltare sulla porta 8081.
+  servlet:
+    context-path: /api
+                  # context-path: parte di path che si frappone automaticamente tra host ed endpoint
+                  # http://{hostname}:{port}/{context-path}/{uri}
+                  # http://localhost:8081/api/....
+  compression:
+    enabled: true # Abilita la compressione delle risposte del server.
+    min-response-size: 2KB # Abilita la compressione per le risposte che superano i 2KB.
+
+# SPRING BOOT + DATABASE
+spring:
+  application:
+    name: myblog # Definisce il nome dell'applicazione.
+
+  datasource: #Configura il collegamento al database.
+    url: jdbc:${DB_VENDOR}://${DB_HOSTNAME}:${DB_PORT}/${DB_NAME}?ssl-mode=REQUIRED # URL del database, con variabili placeholder
+                                                                                    # che saranno sostituite con i valori reali
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    # Credenziali per l'accesso al database.
+    driver-class-name: com.mysql.cj.jdbc.Driver # Classe driver JDBC per MySQL.
+
+  jpa:
+    hibernate:
+      ddl-auto: update # Configura Hibernate per aggiornare lo schema del database, senza eliminare colonne obsolete.
+                # create-drop: crea tabelle all'avvio dell'applicazione e le distugge quando la stoppo
+                # validated: confronta le entità del progetto con le tabelle del db: se ci sono anomalie, solleva eccezione
+                # none: da usare in ambiente di produzione: non viene riportata alcuna modifica al db
+                # update: aggiorna il db con le tabelle/colonne nuove; non elimina colonne che non hanno più corrispondenza con l'entità
+    properties:
+      dialect: org.hibernate.dialect.MySQLDialect # Specifica il dialetto SQL per MySQL.
+      hibernate:
+        format_sql: true # Formatta l'output SQL per una migliore leggibilità.
+    show-sql: true # Mostra le query SQL generate dalla JPA nel log.
+    open-in-view: false # Disabilita la sessione Hibernate aperta durante la visualizzazione.
+
+# LOGGING
+logging: # Configura i livelli di log per vari pacchetti
+  level:
+    it.cgmconsulting: info    #Livello info per i log relativi al tuo pacchetto.
+    org.springframework: info # Livello info per i log di Spring.
+                              # INFO: Fornisce informazioni generali sull'esecuzione dell'applicazione,
+                              # come il completamento di operazioni di successo. È utilizzato per messaggi informativi
+                              # che segnalano il corretto funzionamento dell'applicazione.
+    org.hibernate.orm.jdbc.bind: trace # Livello trace per una traccia dettagliata dei binding JDBC in Hibernate.
+                                       # TRACE: Il livello più dettagliato e meno severo.
+                                       # Utilizzato per il debugging molto fine-grained, visualizza tutte le informazioni
+                                       # dettagliate sulla traccia dell'esecuzione dell'applicazione.
+
+
