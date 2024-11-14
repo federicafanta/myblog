@@ -3,7 +3,6 @@ package it.cgmconsulting.myblog.entity;
 import it.cgmconsulting.myblog.entity.common.CreationUpdate;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.NaturalId;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,10 +30,12 @@ public class User extends CreationUpdate {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private Authority auhority;
+    private Authority authority;
 
     @OneToOne(mappedBy = "user")
     private Avatar avatar;
+
+    private String confirmCode;
 
     @ManyToMany
     @JoinTable(name = "preferred_posts",

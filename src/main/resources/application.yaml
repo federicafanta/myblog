@@ -37,6 +37,22 @@ spring:
     show-sql: true # Mostra le query SQL generate dalla JPA nel log.
     open-in-view: false # Disabilita la sessione Hibernate aperta durante la visualizzazione.
 
+  mail:
+    # host: smtp.gmail.com
+    host: ${MAIL_SMTP}
+    # port: 587
+    port: ${MAIL_PORT}
+    # Nel caso di google lo username corrisponde all'email SENZA '@gmail.com'
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            required: true
+
 # LOGGING
 logging: # Configura i livelli di log per vari pacchetti
   level:
