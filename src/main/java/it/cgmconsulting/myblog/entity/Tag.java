@@ -6,19 +6,21 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.*;
 
-@Entity
-@Getter @Setter @NoArgsConstructor @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
-public class Tag extends CreationUpdate {
+@Entity // Indica che questa classe è un'entità JPA e sarà mappata a una tabella del database.
+@Getter @Setter // Genera automaticamente i metodi getter e setter per tutti i campi della classe grazie a Lombok.
+@NoArgsConstructor // Genera automaticamente un costruttore senza argomenti.
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true) // Genera automaticamente i metodi equals() e hashCode() considerando solo i campi esplicitamente inclusi.
+public class Tag extends CreationUpdate { // La classe Tag estende CreationUpdate, ereditando i campi createdAt e updatedAt.
 
-    @Id
-    @EqualsAndHashCode.Include
-    @Column(length = 30)
-    private String id;
+    @Id // Indica che questo campo è la chiave primaria della tabella.
+    @EqualsAndHashCode.Include // Include questo campo nel calcolo dei metodi equals() e hashCode().
+    @Column(length = 30) // Configura la colonna per accettare una lunghezza massima di 30 caratteri.
+    private String id; // Identificatore univoco del tag.
 
-    private boolean visible; // di default true
+    private boolean visible = true; // Indica se il tag è visibile. Di default è true.
 
-    public Tag(String id) {
-        this.id = id;
-        this.visible = true;
+    public Tag(String id) { // Costruttore che prende un argomento id.
+        this.id = id; // Inizializza il campo id con il valore passato.
+        this.visible = true; // Inizializza il campo visible a true.
     }
 }

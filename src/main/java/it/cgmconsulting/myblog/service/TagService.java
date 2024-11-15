@@ -13,27 +13,28 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@Service
-@RequiredArgsConstructor
+@Service // Indica che questa classe è un servizio e sarà gestita dal contenitore di Spring.
+@RequiredArgsConstructor // Genera un costruttore con un argomento per ogni campo finale, facilitando l'iniezione delle dipendenze.
 public class TagService {
 
-    private final TagRepository tagRepository;
+    private final TagRepository tagRepository; // Iniezione del repository TagRepository.
 
-    public Tag create(String id){
+    public Tag create(String id) {
         Optional<Tag> tag = tagRepository.findById(id);
-        if(tag.isEmpty())
-            return tagRepository.save(new Tag(id));
-        throw new ConflictException(Msg.TAG_ALREADY_PRESENT);
+        if (tag.isEmpty()) {
+            return tagRepository.save(new Tag(id)); // Se il tag non esiste, lo salva nel database.
+        }
+        throw new ConflictException(Msg.TAG_ALREADY_PRESENT); // Se il tag esiste già, lancia un'eccezione di conflitto.
     }
 
     public Tag switchVisibility(String id) {
         Tag tag = tagRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Tag", "id", id));
-        tag.setVisible(!tag.isVisible());
-        return tagRepository.save(tag);
+                .orElseThrow(() -> new ResourceNotFoundException("Tag", "id", id)); // Se il tag non esiste, lancia un'eccezione di risorsa non trovata.
+        tag.setVisible(!tag.isVisible()); // Cambia la visibilità del tag.
+        return tagRepository.save(tag); // Salva il tag aggiornato nel database.
     }
 
     public List<TagResponse> getTags() {
-        return tagRepository.getAll();
+        return tagRepository.getAll(); // Restituisce una lista di tutti i tag.
     }
 }
