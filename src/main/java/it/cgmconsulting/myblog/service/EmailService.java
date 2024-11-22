@@ -8,21 +8,22 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-@Service // Indica che questa classe è un servizio e sarà gestita dal contenitore di Spring.
-@Slf4j // Aggiunge un logger alla classe grazie a Lombok.
-@RequiredArgsConstructor // Genera un costruttore con un argomento per ogni campo finale, facilitando l'iniezione delle dipendenze.
+@Service
+@Slf4j
+@RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender javaMailSender; // Iniezione del bean JavaMailSender per l'invio delle email.
+    private final JavaMailSender javaMailSender;
 
-    @Async // Indica che questo metodo deve essere eseguito in modo asincrono.
-    public void sendVerificationMail(GenericMail mail) {
+    @Async
+    public void sendVerificationMail(GenericMail mail){
 
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage(); // Creazione di un oggetto SimpleMailMessage per configurare l'email.
-        simpleMailMessage.setSubject(mail.getSubject()); // Imposta l'oggetto dell'email.
-        simpleMailMessage.setText(mail.getBody()); // Imposta il corpo dell'email.
-        simpleMailMessage.setTo(mail.getTo()); // Imposta il destinatario dell'email.
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setSubject(mail.getSubject());
+        simpleMailMessage.setText(mail.getBody());
+        simpleMailMessage.setTo(mail.getTo());
 
-        javaMailSender.send(simpleMailMessage); // Invia l'email utilizzando il bean JavaMailSender.
+        javaMailSender.send(simpleMailMessage);
+
     }
 }

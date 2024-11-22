@@ -1,8 +1,10 @@
 package it.cgmconsulting.myblog.exception;
 
+import it.cgmconsulting.myblog.utils.Msg;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,38 +13,63 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@ControllerAdvice // Indica che questa classe fornisce una gestione centralizzata delle eccezioni per l'intera applicazione.
+@ControllerAdvice
 public class ExceptionManagement {
 
-    @ExceptionHandler({ConflictException.class}) // Gestisce le eccezioni di tipo ConflictException.
-    public ResponseEntity<String> conflictExceptionManagement(ConflictException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT); // Restituisce una risposta con lo stato HTTP 409 (Conflict) e il messaggio dell'eccezione.
+    @ExceptionHandler({ConflictException.class})
+    public ResponseEntity<String> conflictExceptionManagement(ConflictException ex){
+        return new ResponseEntity<String>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler({ResourceNotFoundException.class}) // Gestisce le eccezioni di tipo ResourceNotFoundException.
-    public ResponseEntity<String> resourceNotFoundExceptionManagement(ResourceNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND); // Restituisce una risposta con lo stato HTTP 404 (Not Found) e il messaggio dell'eccezione.
+    @ExceptionHandler({ResourceNotFoundException.class})
+    public ResponseEntity<String> resourceNotFoundExceptionManagement(ResourceNotFoundException ex){
+        return new ResponseEntity<String>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    // Per la gestione delle eccezioni sollevate dalle annotazioni di validazione con @Validated.
-    @ExceptionHandler({ConstraintViolationException.class}) // Gestisce le eccezioni di tipo ConstraintViolationException.
+    @ExceptionHandler({DisabledException.class})
+    public ResponseEntity<String> disabledExceptionManagement(DisabledException ex){
+        return new ResponseEntity<String>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler({AccessDeniedException.class})
+    public ResponseEntity<String> disabledExceptionManagement(AccessDeniedException ex){
+        return new ResponseEntity<String>(Msg.ACCESS_DENIED, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler({BadCredentialsException.class})
+    public ResponseEntity<String> badCredentialsExceptionManagement(BadCredentialsException ex){
+        return new ResponseEntity<String>(ex.getMessage(), HttpStatus.FORBIDDEN); // 403
+    }
+
+    @ExceptionHandler({BadRequestException.class})
+    public ResponseEntity<String> badRequestExceptionManagement(BadRequestException ex){
+        return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST); // 400
+    }
+
+    @ExceptionHandler({UnauthorizedException.class})
+    public ResponseEntity<String> unauthorizedExceptionManagement(UnauthorizedException ex){
+        return new ResponseEntity<String>(ex.getMessage(), HttpStatus.UNAUTHORIZED);  // 401
+    }
+
+    // Per la gestione delle eccezioni sollevate dalle annotazioni di validazione con @Validated
+    @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Map<String, String>> constraintViolationExceptionManagement(ConstraintViolationException ex) {
         Map<String, String> errors = ex.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
                         violation -> {
-                            String path = violation.getPropertyPath().toString(); // Ottiene il percorso della proprietà che ha violato il vincolo.
-                            return path.substring(path.lastIndexOf('.') + 1); // Estrae il nome del campo che ha violato il vincolo.
-                        },
-                        violation -> violation.getMessage())); // Ottiene il messaggio di errore per ogni vincolo violato.
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST); // Restituisce una risposta con lo stato HTTP 400 (Bad Request) e una mappa degli errori.
+                            String path = violation.getPropertyPath().toString();
+                            return path.substring(path.lastIndexOf('.') + 1);
+                            },
+                        violation -> violation.getMessage()));
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    // Per la gestione delle eccezioni sollevate dalle annotazioni di validazione con @Valid.
-    @ExceptionHandler(MethodArgumentNotValidException.class) // Gestisce le eccezioni di tipo MethodArgumentNotValidException.
+    // Per la gestione delle eccezioni sollevate dalle annotazioni di validazione con @Valid
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors()
-                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage())); // Popola la mappa degli errori con il nome del campo e il messaggio di errore.
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST); // Restituisce una risposta con lo stato HTTP 400 (Bad Request) e una mappa degli errori.
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }

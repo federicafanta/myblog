@@ -3,11 +3,11 @@ package it.cgmconsulting.myblog.exception;
 import lombok.Getter;
 
 @Getter
-public class ConflictException extends RuntimeException{
+public class BadRequestException extends RuntimeException{
 
     private final String messageError;
 
-    public ConflictException(String messageError) {
+    public BadRequestException(String messageError) {
         super(String.format(messageError));
         this.messageError = messageError;
     }
