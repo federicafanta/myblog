@@ -5,6 +5,7 @@ import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.entity.enumeration.AuthorityName;
 import it.cgmconsulting.myblog.exception.ConflictException;
 import it.cgmconsulting.myblog.exception.ResourceNotFoundException;
+import it.cgmconsulting.myblog.payload.response.PostResponse;
 import it.cgmconsulting.myblog.payload.response.TagResponse;
 import it.cgmconsulting.myblog.repository.TagRepository;
 import it.cgmconsulting.myblog.utils.Msg;
@@ -41,4 +42,14 @@ public class TagService {
             return tagRepository.getAll(visible.get());
         return tagRepository.getAll();
     }
+
+    public Set<Tag> findVisibleTags(Set<String> tags){
+        return tagRepository.findByVisibleTrueAndIdIn(tags);
+    }
+
+    public Set<String> getTagsByPost(int postId){
+        return tagRepository.getTagsByPost(postId);
+    }
+
+
 }

@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,7 +27,7 @@ public class Post extends CreationUpdate {
     @Column(length = 10000, nullable = false)
     private String content;
 
-    private String image; // nome file + estensione
+    private String image; // nome file + estensione da rinominare in -> postId_UUID.estensione
 
     private LocalDate publishedAt;
 
@@ -40,4 +41,7 @@ public class Post extends CreationUpdate {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags = new HashSet<>();
+
+    @OneToMany(mappedBy = "post")
+    List<Comment> comments;
 }
